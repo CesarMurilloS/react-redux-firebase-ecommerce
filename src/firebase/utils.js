@@ -13,29 +13,33 @@ GoogleProvider.setCustomParameters({ prompt: 'select_account' });
 export const signInWithGoogle = () => auth.signInWithPopup(GoogleProvider);
 
 export const handleUserProfile = async (userAuth, additionalData) => {
+  //Takes the userAuth object
   if (!userAuth) return;
-    //Get the user id
-    const { uid } = userAuth;
+  //Get the user id
+  const { uid } = userAuth;
 
-        //Insert the user id
-    const userRef = firestore.doc(`users/${uid}`);
-    const snapshot = await userRef.get();
+  //Checks if the user exists in our users collection in our users firebase
+  const userRef = firestore.doc(`users/${uid}`);
+  const snapshot = await userRef.get();
 
-        //This will tell us if the document exists or not
-    if (!snapshot.exists) {
-        const { displayName, email } = userAuth;
-        const timestamp = new Date();
+  //If user doesnt exists
+  if (!snapshot.exists) {
+      const { displayName, email } = userAuth;
+      const timestamp = new Date();
 
-        try {
-        await userRef.set({
-            displayName,
-            email,
-            createdDate: timestamp,
-            ...additionalData
-        });
-        } catch(err) {
-        // console.log(err);
-        }
-    }
+      //We register them, we create a new document in our users collection
+      try {
+        //Store the user information
+      await userRef.set({
+          displayName,
+          email,
+          createdDate: timestamp,
+          ...additionalData
+      });
+      } catch(err) {
+      // console.log(err);
+      }
+  }
+  //Regardless of the registration, we return the userRef document that we can use to store user information to actually sign them in
   return userRef;
 };
