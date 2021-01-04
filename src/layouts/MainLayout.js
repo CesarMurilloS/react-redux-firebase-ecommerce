@@ -5,11 +5,10 @@ import Header from './../components/Header';
 const MainLayout = props => {
   return (
     <div>
-      <Header />
+      <Header {...props} />
       <div className="main">
         {props.children}
       </div>
-      <Footer></Footer>
     </div>
   );
 };
