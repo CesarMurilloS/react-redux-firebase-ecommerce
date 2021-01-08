@@ -8,9 +8,8 @@ firebase.initializeApp(firebaseConfig);
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 
-const GoogleProvider = new firebase.auth.GoogleAuthProvider();
+export const GoogleProvider = new firebase.auth.GoogleAuthProvider();
 GoogleProvider.setCustomParameters({ prompt: 'select_account' });
-export const signInWithGoogle = () => auth.signInWithPopup(GoogleProvider);
 
 export const handleUserProfile = async (userAuth, additionalData) => {
   //Takes the userAuth object
@@ -24,22 +23,21 @@ export const handleUserProfile = async (userAuth, additionalData) => {
 
   //If user doesnt exists
   if (!snapshot.exists) {
-      const { displayName, email } = userAuth;
-      const timestamp = new Date();
-
-      //We register them, we create a new document in our users collection
-      try {
-        //Store the user information
+    const { displayName, email } = userAuth;
+    const timestamp = new Date();
+    
+    //We register them, we create a new document in our users collection
+    try {
+      //Store the user information
       await userRef.set({
-          displayName,
-          email,
-          createdDate: timestamp,
-          ...additionalData
+        displayName,
+        email,
+        createdDate: timestamp,
+        ...additionalData
       });
-      } catch(err) {
+    } catch(err) {
       // console.log(err);
-      }
+    }
   }
-  //Regardless of the registration, we return the userRef document that we can use to store user information to actually sign them in
   return userRef;
 };
